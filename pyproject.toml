@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ssp-course-track2-codec-baseline"
+version = "0.1.0"
+description = "A fixed-16-kHz, 2.4-kbps neural speech codec baseline for SSP Course Track 2"
+readme = "README.md"
+requires-python = ">=3.10,<3.12"
+dependencies = [
+  "numpy>=1.23,<3",
+  "PyYAML>=6.0",
+  "scipy>=1.10",
+  "soundfile>=0.12",
+  "torch>=2.2,<2.8",
+  "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

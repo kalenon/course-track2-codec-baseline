@@ -1,0 +1,53 @@
+seed: 2026
+
+audio:
+  sample_rate: 16000
+  frame_samples: 160
+  segment_samples: 16000
+
+model:
+  sample_rate: 16000
+  frame_samples: 160
+  encoder_channels: [8, 16, 32, 64, 160]
+  encoder_strides: [2, 4, 4, 5]
+  decoder_channels: [160, 48, 24, 12, 8]
+  decoder_strides: [5, 4, 4, 2]
+  residual_blocks: 3
+  residual_kernel_size: 3
+  rvq_num_codebooks: 3
+  rvq_codebook_size: 256
+  rvq_codebook_dim: 160
+  commitment_weight: 0.10
+  rvq_ema_decay: 0.99
+  rvq_dead_code_threshold: 0.5
+  rvq_dead_code_after_updates: 100
+  rvq_kmeans_iterations: 10
+
+loss:
+  waveform_l1_weight: 1.0
+  spectral_weight: 1.0
+  fft_sizes: [256, 512, 1024]
+  adversarial_weight: 0.1
+  feature_matching_weight: 1.0
+
+adversarial:
+  resolutions:
+    - [256, 64, 256]
+    - [512, 128, 512]
+    - [1024, 256, 1024]
+  start_step: 10000
+  warmup_steps: 10000
+  learning_rate: 0.0002
+  gradient_clip_norm: 10.0
+
+training:
+  batch_size: 8
+  num_workers: 2
+  epochs: 100
+  learning_rate: 0.0002
+  weight_decay: 0.000001
+  gradient_clip_norm: 1.0
+  validation_limit: 128
+  validation_checkpoint_interval_steps: 10000
+  sample_inference_count: 4
+  output_dir: runs/baseline_16k_2p4k_ema_rvq_gan
