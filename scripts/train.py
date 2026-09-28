@@ -47,6 +47,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--train-manifest", help="one absolute audio path per line")
     parser.add_argument("--valid-manifest", help="one absolute audio path per line")
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
+    parser.add_argument("--output-dir", help="override training.output_dir from the YAML config")
     parser.add_argument("--resume", default=None)
     parser.add_argument("--epochs", type=int, default=None, help="override config")
     parser.add_argument(
@@ -316,6 +317,8 @@ def validate_and_checkpoint(
 def main() -> None:
     args = parse_args()
     config = yaml.safe_load(Path(args.config).read_text(encoding="utf-8"))
+    if args.output_dir:
+        config["training"]["output_dir"] = args.output_dir
     if config["audio"]["sample_rate"] != 16_000 or config["audio"]["frame_samples"] != 160:
         raise ValueError("the baseline configuration must remain fixed at 16 kHz / 10 ms")
     device, rank, world_size, distributed = distributed_context(args.device)
