@@ -79,3 +79,7 @@ python scripts/complexity.py --checkpoint "$CKPT" \
 ```
 
 `metrics/summary.json` 包含 PESQ-WB、ESTOI、SI-SNR、UTMOS 和课程客观质量分；参考数值见 [BASELINE_RESULTS.md](BASELINE_RESULTS.md)。`selection.json` 记录抽样及来源。仓库附带的 `runs/baseline_16k_2p4k_ema_rvq_gan/checkpoints/best.pt` 可用于编码/解码接口检查；从头训练后，将 `CKPT` 指向新生成的权重。
+
+## 5. 后续盲测
+
+后续提供的盲测目录可设为 `BLIND_ROOT`（16 kHz 单通道 WAV），并用于替换上面的 `--input-dir`；比特流、重建和格式检查应输出到新的目录。盲测无需参考波形评分；提交内容为课程要求的 `.bin`、配套 `.json` 及相关结果文件。训练清单、原始语料、个人工作目录和盲测数据不提交到 Git。
