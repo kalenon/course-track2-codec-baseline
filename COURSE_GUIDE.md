@@ -1,21 +1,21 @@
 # Track 2：平台使用与基线复现
 
-赛题以 [大作业 Track 2](大作业%20track%202.md) 为准。本项目提供 16 kHz、固定 2.4 kbps 的语音编解码基线。训练、验证和盲测所需音频由你在课程平台挂载；仓库不要求数据位于某个固定目录。
+赛题以 [大作业 Track 2](大作业%20track%202.md) 为准。本项目提供 16 kHz、固定 2.4 kbps 的语音编解码基线。VCTK 0.92 与 LibriTTS 由课程平台提供，挂载路径取决于运行环境；后续盲测数据另行提供。仓库不要求数据位于固定目录，参考 `best.pt` 已包含在仓库中。
 
-## 1. 选择资源和设置路径
+## 1. 平台资源与路径
 
-在平台任务中挂载 VCTK 0.92、LibriTTS，并按资源配额选择 GPU。进入本仓库根目录后，按实际挂载结果修改下面四个值：
+以下命令在仓库根目录执行。示例中的数据路径对应平台提供的 VCTK 0.92 和 LibriTTS 挂载点；GPU 编号与可写工作目录根据实际分配情况设置：
 
 ```bash
-export GPU_ID=0                              # 平台分配给你的 GPU 编号
-export VCTK_ROOT=/path/to/VCTK-Corpus-0.92
-export LIBRITTS_ROOT=/path/to/LibriTTS
+export GPU_ID=0                              # 平台分配的 GPU 编号
+export VCTK_ROOT=/path/to/platform-mounted/VCTK-Corpus-0.92
+export LIBRITTS_ROOT=/path/to/platform-mounted/LibriTTS
 export WORK_ROOT=/path/to/your-writable-workspace/track2
 mkdir -p "$WORK_ROOT"
 export TORCH_HOME="$WORK_ROOT/torch-cache"    # UTMOS 等模型的下载缓存
 ```
 
-`WORK_ROOT` 应是你有写权限且容量足够的目录；模型、清单、验证样本和评测结果都写在这里。`CUDA_VISIBLE_DEVICES="$GPU_ID"` 将所选 GPU 映射为程序内的 `cuda:0`。单卡任务无需改代码；若平台只提供 CPU，可在各命令中使用 `--device cpu`。
+`WORK_ROOT` 应指向有写权限且容量足够的目录；模型、清单、验证样本和评测结果都写在这里。`CUDA_VISIBLE_DEVICES="$GPU_ID"` 将所选 GPU 映射为程序内的 `cuda:0`。单卡任务无需改代码；若平台只提供 CPU，可在各命令中使用 `--device cpu`。
 
 安装依赖：
 
@@ -24,7 +24,7 @@ python -m pip install -r requirements.txt
 python -m pip install -r requirements-evaluation.txt
 ```
 
-请先按平台的 CUDA 版本安装匹配的 PyTorch，再执行上面的命令。`pesq`、`pystoi` 用于完整验证评分；UTMOS 首次运行可能下载权重，请预留网络或缓存。
+PyTorch 需按平台的 CUDA 版本安装，再执行上述依赖安装命令。`pesq`、`pystoi` 用于完整验证评分；UTMOS 首次运行可能下载权重，因此还需网络或预置缓存。
 
 ## 2. 生成训练清单
 
@@ -35,7 +35,7 @@ python scripts/prepare_vctk_libritts.py \
   --output-dir "$WORK_ROOT/manifests"
 ```
 
-脚本只写文本清单，不复制大音频。清单中的源音频路径是**本次挂载的绝对路径**；换服务器或挂载点后，请重新运行此步骤。VCTK 使用 `mic1` 并按说话人划分；LibriTTS 使用官方训练与开发划分。读取时自动重采样为 16 kHz。
+脚本只写文本清单，不复制大音频。清单中的源音频路径是**本次挂载的绝对路径**；服务器或挂载点变化后需重新生成清单。VCTK 使用 `mic1` 并按说话人划分；LibriTTS 使用官方训练与开发划分。读取时自动重采样为 16 kHz。
 
 ## 3. 训练
 
@@ -78,4 +78,4 @@ python scripts/complexity.py --checkpoint "$CKPT" \
   --output "$WORK_ROOT/complexity.json"
 ```
 
-`metrics/summary.json` 包含 PESQ-WB、ESTOI、SI-SNR、UTMOS 和课程客观质量分；参考数值见 [BASELINE_RESULTS.md](BASELINE_RESULTS.md)。`selection.json` 记录抽样及来源。使用仓库附带的 `runs/baseline_16k_2p4k_ema_rvq_gan/checkpoints/best.pt` 可先检查编码/解码接口；从头训练后请用自己的 `CKPT`。
+`metrics/summary.json` 包含 PESQ-WB、ESTOI、SI-SNR、UTMOS 和课程客观质量分；参考数值见 [BASELINE_RESULTS.md](BASELINE_RESULTS.md)。`selection.json` 记录抽样及来源。仓库附带的 `runs/baseline_16k_2p4k_ema_rvq_gan/checkpoints/best.pt` 可用于编码/解码接口检查；从头训练后，将 `CKPT` 指向新生成的权重。
