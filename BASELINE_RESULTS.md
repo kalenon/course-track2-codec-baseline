@@ -1,6 +1,6 @@
 # Track 2 基线验证结果
 
-以下是本机参考权重在固定 200 条 16 kHz 验证语音上的实测值，不是后期盲测成绩。参考输入来自 VCTK 0.92 与 LibriTTS 的开发划分，由 `scripts/prepare_vctk_libritts.py` 生成清单，再以种子 42 抽取 200 条并重采样。完整的逐条结果由 `scripts/evaluate.py` 输出。
+以下是仓库参考权重在固定 200 条 16 kHz 验证语音上的实测值，不是后期盲测成绩。参考输入来自 VCTK 0.92 与 LibriTTS 的开发划分，由 `scripts/prepare_vctk_libritts.py` 生成清单，再以种子 42 抽取 200 条并重采样。完整的逐条结果由 `scripts/evaluate.py` 输出。
 
 | 指标 | 实测均值 |
 |---|---:|
@@ -16,6 +16,6 @@
 
 - `configs/baseline_16k_2p4k.yaml`，16 kHz / 2.4 kbps / 10 ms / 24 bit；
 - 参考权重：`runs/baseline_16k_2p4k_ema_rvq_gan/checkpoints/best.pt`；
-- 本机 `valid.scp` ；清单记录了本机绝对路径，但同一版本数据由脚本按语料和相对路径排序；
+- 验证清单 `valid.scp` 包含该次挂载的绝对路径；换挂载点后应按 [指南](COURSE_GUIDE.md) 重新生成清单，再固定种子抽取验证语音；
 
 从零复现命令与自定义路径方式见 [课程复现指南](COURSE_GUIDE.md)。

@@ -2,7 +2,6 @@
 """Create a deterministic 16-kHz codec validation subset from an audio-path manifest."""
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 
@@ -36,7 +35,6 @@ def main():
         sf.write(target, mono, 16000, subtype="PCM_16")
         mapping.append({"id": target.stem, "source": str(source), "source_sr": sr})
     summary = {"manifest": str(args.manifest.resolve()),
-               "manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
                "seed": args.seed, "files": len(mapping), "items": mapping}
     (args.output_dir / "selection.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(f"Prepared {len(mapping)} mono 16-kHz WAV files in {args.output_dir}")
