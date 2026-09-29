@@ -5,3 +5,8 @@ data/
 runs/
 checkpoints/*.pt
 
+*.json
+*.bin
+*.wav
+/src/ssp_course_track2_codec_baseline.egg-info/
+/torch-cache/
